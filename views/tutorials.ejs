@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+	<h2 class="p-3">Tutorials</h2>
+	<div class="row p-3">
+		<input type="search" id="search-input" class="form-control rounded" placeholder="Search by description"
+			aria-label="Search" aria-describedby="search-addon">
+	</div>
+	<div class="row p-3">
+		<div class="col">
+			Order by Field
+			<select id="select-ordering" class="form-select" aria-label="Ordering">
+				<option value="No ordering" selected>No Ordering</option>
+				<option value="title">Title</option>
+				<option value="description">Description</option>
+				<option value="published">Published</option>
+			</select>
+		</div>
+		<div class="col">
+			Ascending / Descending
+			<select id="select-how-to-order" class="form-select" aria-label="Ordering">
+				<option value="asc">Ascending</option>
+				<option value="desc">Descending</option>
+			</select>
+		</div>
+	</div>
+	<div class="row p-3">
+		<div class="col">
+			Page number <input type="number" class="form-control rounded" id="page-number">
+		</div>
+		<div class="col">
+			Page size <input type="number" id="page-size" class="form-control rounded">
+		</div>
+	</div>
+	<div class="row p-3">
+		<input type="submit" class="btn btn-success" onclick="buildQueryString()" value="Submit">
+	</div>
+	<div class="list-group">
+		<% tutorials.forEach(function(tutorial) { %>
+			<div class="row px-3 py-1 w-100">
+				<div class="col py-1 bg-info">
+					<%=tutorial.title%>
+				</div>
+				<div class="col py-1 bg-info">
+					<%=tutorial.description%>
+				</div>
+				<div class="col py-1 bg-info">
+					<input type="checkbox" id="Published" name="Published" <%=tutorial.published ?'checked':'unchecked'%> disabled
+					>
+					<label for="Published">Published</label>
+				</div>
+			</div>
+			<% }); %>
+	</div>
+
+	<script>
+		function buildQueryString() {
+			let filterAdded = false
+			const search = document.getElementById('search-input').value
+			const ordering = document.getElementById('select-ordering').value
+			const order = document.getElementById('select-how-to-order').value
+			const page = document.getElementById('page-number').value
+			const size = document.getElementById('page-size').value
+
+			let QueryString = ""
+
+			if (search != "") {
+				QueryString = updateString(QueryString, filterAdded)
+				QueryString += "description=" + search
+				filterAdded = true
+			}
+
+			if (ordering != "No ordering") {
+				QueryString = updateString(QueryString, filterAdded)
+				QueryString += "sort=" + ordering + ":" + order
+				filterAdded = true
+			}
+
+			if (page != "") {
+				QueryString = updateString(QueryString, filterAdded)
+				QueryString += "page=" + page
+				filterAdded = true
+			}
+
+			if (size != "") {
+				QueryString = updateString(QueryString, filterAdded)
+				QueryString += "size=" + size
+				filterAdded = true
+			}
+
+			window.location.href = "http://localhost:3000/tutorials" + QueryString
+
+		}
+
+		function updateString(QueryString, filterAdded) {
+			if (filterAdded) {
+				QueryString += "&"
+			} else {
+				QueryString += "?"
+			}
+			return QueryString
+		}
+
+	</script>
+
+
+</body>
+
+</html>
